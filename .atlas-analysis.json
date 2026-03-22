@@ -1,0 +1,84 @@
+{
+  "projectType": "general",
+  "projectName": "KarChunT Docs",
+  "projectDescription": "KarChunT's personal documentation site covering guides, content writing, AI tool integrations, and API reference examples built on Mintlify.",
+  "theme": "mint",
+  "primaryColor": "#54545c",
+  "lightColor": null,
+  "darkColor": null,
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Guides",
+        "groups": [
+          {
+            "group": "Getting Started",
+            "pages": [
+              "index",
+              "quickstart",
+              "development"
+            ]
+          },
+          {
+            "group": "Customization",
+            "pages": [
+              "essentials/settings",
+              "essentials/navigation"
+            ]
+          },
+          {
+            "group": "Writing Content",
+            "pages": [
+              "essentials/markdown",
+              "essentials/code",
+              "essentials/images",
+              "essentials/reusable-snippets"
+            ]
+          },
+          {
+            "group": "AI Tools",
+            "pages": [
+              "ai-tools/cursor",
+              "ai-tools/claude-code",
+              "ai-tools/windsurf"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "API Reference",
+        "groups": [
+          {
+            "group": "Overview",
+            "pages": [
+              "api-reference/introduction"
+            ]
+          },
+          {
+            "group": "Endpoints",
+            "pages": [
+              "api-reference/endpoint/get",
+              "api-reference/endpoint/create",
+              "api-reference/endpoint/delete",
+              "api-reference/endpoint/webhook"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "MDX-based documentation with Mintlify components",
+    "AI tool integrations for Cursor, Claude Code, and Windsurf",
+    "OpenAPI-based API reference documentation",
+    "Customizable navigation, theming, and branding via docs.json",
+    "Reusable content snippets across pages",
+    "Local development preview with the Mintlify CLI"
+  ],
+  "publicApiSurface": [
+    "GET /plants — Retrieve plant list",
+    "POST /plants — Create a new plant",
+    "DELETE /plants/{id} — Delete a plant",
+    "POST /webhook — Webhook endpoint"
+  ]
+}
