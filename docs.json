@@ -5,6 +5,7 @@
   "colors": {
     "primary": "#54545c"
   },
+  "favicon": "/favicon.svg",
   "logo": {
     "light": "https://media.brand.dev/99d23bb0-7527-48e5-b2c1-71011df3a4d8.svg",
     "dark": "https://media.brand.dev/99d23bb0-7527-48e5-b2c1-71011df3a4d8.svg"

@@ -300,30 +300,31 @@ Run `mint dev` after editing `docs.json` to preview changes locally at `localhos
   </CodeGroup>
 </ResponseField>
 
-<ResponseField name="appearance" type="Appearance">
+<ResponseField name="modeToggle" type="ModeToggle">
   Controls the default color mode and whether users can toggle between light and dark.
 
-  <Expandable title="Appearance properties">
-    <ResponseField name="default" type="string" default="system">
-      The default color mode for new visitors. One of: `"system"`, `"light"`, `"dark"`.
+  <Expandable title="ModeToggle properties">
+    <ResponseField name="default" type="string">
+      The default color mode for new visitors. One of: `"light"`, `"dark"`. When omitted, Mintlify follows the user's operating system preference.
     </ResponseField>
-    <ResponseField name="strict" type="boolean" default="false">
-      Set to `true` to hide the light/dark mode toggle, locking users into the `default` mode.
+    <ResponseField name="isHidden" type="boolean" default="false">
+      Set to `true` to hide the light/dark mode toggle. Combine with `default` to lock your site to one mode.
     </ResponseField>
   </Expandable>
 
   <CodeGroup>
 
-  ```json Force dark mode
-  "appearance": {
+  ```json Force dark mode only
+  "modeToggle": {
     "default": "dark",
-    "strict": true
+    "isHidden": true
   }
   ```
 
-  ```json Follow system preference
-  "appearance": {
-    "default": "system"
+  ```json Force light mode only
+  "modeToggle": {
+    "default": "light",
+    "isHidden": true
   }
   ```
 
@@ -363,37 +364,29 @@ The following shows a complete `docs.json` configuration combining all major set
 ```json docs.json
 {
   "$schema": "https://mintlify.com/docs.json",
-  "theme": "maple",
+  "theme": "mint",
   "name": "KarChunT Docs",
   "colors": {
-    "primary": "#6366F1",
-    "light": "#A5B4FC",
-    "dark": "#4338CA"
+    "primary": "#54545c"
   },
   "logo": {
     "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg",
-    "href": "/"
+    "dark": "/logo/dark.svg"
   },
-  "favicon": "/favicon.ico",
+  "favicon": "/favicon.svg",
   "navbar": {
-    "links": [
-      { "type": "github", "href": "https://github.com/example/repo" }
-    ],
     "primary": {
-      "type": "button",
-      "label": "Get started",
-      "href": "/quickstart"
+      "type": "github",
+      "href": "https://github.com/KarChunT/karchunt-docs"
     }
   },
   "footer": {
     "socials": {
-      "github": "https://github.com/example",
-      "x": "https://x.com/example"
+      "github": "https://github.com/KarChunT/karchunt-docs"
     }
   },
-  "appearance": {
-    "default": "system"
+  "modeToggle": {
+    "default": "light"
   },
   "contextual": {
     "options": ["copy", "claude", "cursor"]
@@ -401,14 +394,14 @@ The following shows a complete `docs.json` configuration combining all major set
   "navigation": {
     "tabs": [
       {
-        "tab": "Docs",
+        "tab": "Guides",
         "groups": [
           {
-            "group": "Getting started",
-            "pages": ["index", "quickstart"]
+            "group": "Getting Started",
+            "pages": ["index", "quickstart", "development"]
           },
           {
-            "group": "Essentials",
+            "group": "Customization",
             "pages": ["essentials/settings", "essentials/navigation"]
           }
         ]
