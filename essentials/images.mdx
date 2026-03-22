@@ -1,59 +1,144 @@
 ---
 title: 'Images and embeds'
-description: 'Add image, video, and other HTML elements'
+description: 'Embed images, videos, and HTML elements in your documentation pages.'
 icon: 'image'
 ---
 
-<img
-  style={{ borderRadius: '0.5rem' }}
-  src="https://mintlify-assets.b-cdn.net/bigbend.jpg"
-/>
+Mintlify supports standard Markdown image syntax, the `<Frame>` component for styled images with captions, raw HTML for fine-grained control, and `<iframe>` embeds for video and external content.
 
-## Image
+## Images with Markdown
 
-### Using Markdown
-
-The [markdown syntax](https://www.markdownguide.org/basic-syntax/#images) lets you add images using the following code
+The standard Markdown image syntax is the quickest way to add an image:
 
 ```md
-![title](/path/image.jpg)
+![Dashboard showing the analytics overview](/images/dashboard.png)
 ```
 
-Note that the image file size must be less than 5MB. Otherwise, we recommend hosting on a service like [Cloudinary](https://cloudinary.com/) or [S3](https://aws.amazon.com/s3/). You can then use that URL and embed.
+The format is `![alt text](path)`. The alt text is required — it describes the image for screen readers and appears when the image fails to load.
 
-### Using embeds
+<Warning>
+Store images in the `images/` directory at the root of your docs project and reference them with root-relative paths (`/images/screenshot.png`). Do not use relative paths like `../images/screenshot.png`.
 
-To get more customizability with images, you can also use [embeds](/writing-content/embed) to add images
+Image files must be under 5 MB. For larger images, host them on a service like [Cloudinary](https://cloudinary.com/) or [Amazon S3](https://aws.amazon.com/s3/) and use the external URL.
+</Warning>
+
+## Framed images with captions
+
+The `<Frame>` component wraps an image in a styled container and optionally adds a caption below it. Use this when you want to give an image visual separation from surrounding text:
+
+```mdx
+<Frame caption="The Mintlify dashboard showing navigation and deployment status.">
+  <img src="/images/dashboard.png" alt="Mintlify dashboard" />
+</Frame>
+```
+
+You can also add a `hint` above the image:
+
+```mdx
+<Frame hint="Figure 1" caption="Project structure after initialization.">
+  <img src="/images/project-structure.png" alt="Project folder structure" />
+</Frame>
+```
+
+## Linking images
+
+To make an image a clickable link, wrap the Markdown image syntax inside a link:
+
+```md
+[![Dashboard preview](/images/dashboard-thumb.png)](/essentials/settings)
+```
+
+Or use HTML for more control over the link target:
 
 ```html
-<img height="200" src="/path/image.jpg" />
+<a href="/essentials/settings">
+  <img src="/images/dashboard-thumb.png" alt="Dashboard preview" />
+</a>
 ```
 
-## Embeds and HTML elements
+## Dark mode images
 
+You can show different images in light and dark mode using the `data-hide-on-theme` HTML attribute:
+
+```html
+<img
+  src="/images/logo-light.png"
+  alt="KarChunT logo"
+  data-hide-on-theme="dark"
+/>
+<img
+  src="/images/logo-dark.png"
+  alt="KarChunT logo"
+  data-hide-on-theme="light"
+/>
+```
+
+The first image is hidden when the reader uses dark mode; the second is hidden in light mode. Only the appropriate image renders for each theme.
+
+## Image sizing
+
+Control image dimensions with HTML attributes or inline styles. Use this to prevent oversized images from dominating the page:
+
+```html
+<!-- Fixed width -->
+<img src="/images/icon.png" alt="App icon" width="64" />
+
+<!-- Percentage width -->
+<img src="/images/banner.png" alt="Product banner" style={{ width: '75%' }} />
+
+<!-- Max width with rounded corners -->
+<img
+  src="/images/screenshot.png"
+  alt="App screenshot"
+  style={{ maxWidth: '600px', borderRadius: '0.5rem' }}
+/>
+```
+
+<Info>
+When setting styles in MDX, use the JSX object syntax (`style={{ borderRadius: '0.5rem' }}`). CSS property names must be camelCase — `maxWidth`, not `max-width`.
+</Info>
+
+## Embedding videos
+
+Use the HTML `<video>` element to embed a locally hosted video file:
+
+```html
+<video
+  controls
+  style={{ width: '100%', borderRadius: '0.5rem' }}
+>
+  <source src="/videos/demo.mp4" type="video/mp4" />
+  Your browser does not support the video element.
+</video>
+```
+
+For autoplay without controls (e.g., a looping animation):
+
+```html
+<video autoplay loop muted playsinline style={{ width: '100%' }}>
+  <source src="/videos/animation.mp4" type="video/mp4" />
+</video>
+```
+
+## Embedding external video with iframes
+
+Use `<iframe>` to embed YouTube, Loom, or other hosted video platforms:
+
+```html
 <iframe
   width="560"
   height="315"
-  src="https://www.youtube.com/embed/4KzFe50RQkQ"
-  title="YouTube video player"
+  src="https://www.youtube.com/embed/VIDEO_ID"
+  title="Video title"
   frameBorder="0"
   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
   allowFullScreen
   style={{ width: '100%', borderRadius: '0.5rem' }}
 ></iframe>
+```
 
-<br />
+Replace `VIDEO_ID` with the YouTube video ID from the video URL. For example, the URL `https://www.youtube.com/watch?v=dQw4w9WgXcQ` has the ID `dQw4w9WgXcQ`.
 
 <Tip>
-
-Mintlify supports [HTML tags in Markdown](https://www.markdownguide.org/basic-syntax/#html). This is helpful if you prefer HTML tags to Markdown syntax, and lets you create documentation with infinite flexibility.
-
+Always set `style={{ width: '100%' }}` on iframes so they scale correctly on mobile screens. The `height` attribute sets the initial height, but the `width: 100%` style lets the iframe fill its container.
 </Tip>
-
-### iFrames
-
-Loads another HTML page within the document. Most commonly used for embedding videos.
-
-```html
-<iframe src="https://www.youtube.com/embed/4KzFe50RQkQ"> </iframe>
-```

@@ -1,39 +1,47 @@
 ---
 title: "Cursor setup"
-description: "Configure Cursor for your documentation workflow"
+description: "Configure Cursor to write and maintain your Mintlify documentation with AI assistance."
 icon: "arrow-pointer"
 ---
 
-Set up Cursor to help you write and maintain your Mintlify documentation.
+Cursor is an AI-powered code editor that you can configure to draft, edit, and maintain Mintlify documentation. Installing the Mintlify skill gives Cursor accurate knowledge of components, configuration options, and writing conventions specific to your docs.
 
 ## Prerequisites
 
-- Cursor editor installed
+- [Cursor](https://cursor.com) editor installed
 
 ## Setup
 
 <Steps>
-<Step title="Open your docs directory in Cursor">
-  Open the root of your documentation repository where `docs.json` is located.
-</Step>
+  <Step title="Open your docs directory in Cursor">
+    Open the root of your documentation repository — the folder that contains `docs.json`. This ensures Cursor has full context over your navigation structure, existing pages, and configuration.
+  </Step>
 
-<Step title="Install the Mintlify skill">
-  In the integrated terminal, run:
+  <Step title="Install the Mintlify skill">
+    In the integrated terminal, run:
 
-  ```bash
-  npx skills add https://mintlify.com/docs
-  ```
+    ```bash
+    npx skills add https://mintlify.com/docs
+    ```
 
-  This gives Cursor Mintlify's component reference, writing standards,
-  and workflow guidance.
-</Step>
+    This writes a skill file into your project that teaches Cursor how Mintlify components work, what frontmatter fields are required, and how to structure pages correctly.
+  </Step>
 
-<Step title="Customize project instructions">
-  Edit `AGENTS.md` in your project root to add project-specific terminology,
-  style preferences, and content boundaries.
-</Step>
+  <Step title="Customize AGENTS.md">
+    Open `AGENTS.md` in your project root. Add project-specific context so Cursor's suggestions stay on-brand:
 
-<Step title="Start writing with Cursor">
-  Open a file and use Cursor's AI features to draft and edit documentation.
-</Step>
+    - **Terminology** — define preferred terms (for example, "workspace" instead of "project")
+    - **Style preferences** — tone, sentence length, heading conventions
+    - **Content boundaries** — pages or topics that should not be generated or modified
+
+    The more specific you make this file, the more consistent Cursor's output will be across your entire doc set.
+  </Step>
+
+  <Step title="Start writing with Cursor">
+    Open any `.mdx` file and use Cursor's inline AI features — Tab completion, Cmd+K edits, or the chat panel — to draft new content, rewrite sections, or generate component markup.
+  </Step>
 </Steps>
+
+<Tip>
+  The Mintlify skill gives Cursor accurate references for every component — `<Card>`, `<Steps>`, `<Accordion>`, and more — so generated markup renders correctly without manual correction.
+</Tip>

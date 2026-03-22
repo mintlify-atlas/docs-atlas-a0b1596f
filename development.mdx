@@ -1,94 +1,102 @@
 ---
-title: 'Development'
-description: 'Preview changes locally to update your docs'
+title: "Development"
+description: "Run a local preview of your docs, manage CLI versions, and validate your content before deploying."
 ---
 
 <Info>
-  **Prerequisites**:
+  **Prerequisites**
   - Node.js version 19 or higher
-  - A docs repository with a `docs.json` file
+  - A docs repository containing a `docs.json` file
 </Info>
 
-Follow these steps to install and run Mintlify on your operating system.
+## Install the CLI
 
-<Steps>
-<Step title="Install the Mintlify CLI">
+Install the Mintlify CLI globally:
 
 ```bash
 npm i -g mint
 ```
-</Step>
 
-<Step title="Preview locally">
+## Run the local preview
 
-Navigate to your docs directory where your `docs.json` file is located, and run the following command:
+Navigate to the root of your docs repository — where your `docs.json` lives — and start the dev server:
 
 ```bash
 mint dev
 ```
 
-A local preview of your documentation will be available at `http://localhost:3000`.
-
-</Step>
-</Steps>
+The preview opens at `http://localhost:3000` and hot-reloads as you edit files.
 
 ## Custom ports
 
-By default, Mintlify uses port 3000. You can customize the port Mintlify runs on by using the `--port` flag. For example, to run Mintlify on port 3333, use this command:
+If port 3000 is already in use, Mintlify automatically tries the next available port and logs a message:
+
+```
+Port 3000 is already in use. Trying 3001 instead.
+```
+
+You can also set a port explicitly with the `--port` flag:
 
 ```bash
 mint dev --port 3333
 ```
 
-If you attempt to run Mintlify on a port that's already in use, it will use the next available port:
+## Update the CLI
 
-```md
-Port 3000 is already in use. Trying 3001 instead.
-```
-
-## Mintlify versions
-
-Please note that each CLI release is associated with a specific version of Mintlify. If your local preview does not align with the production version, please update the CLI:
+Each CLI release targets a specific version of Mintlify. If your local preview looks different from production, update the CLI:
 
 ```bash
 npm mint update
 ```
 
-## Validating links
+<Note>Check the [CLI changelog](https://www.npmjs.com/package/mintlify?activeTab=versions) to see what changed between versions.</Note>
 
-The CLI can assist with validating links in your documentation. To identify any broken links, use the following command:
+## Validate links
+
+Run the link checker before pushing to catch broken internal links:
 
 ```bash
 mint broken-links
 ```
 
+The command reports every broken link with its source file and line number.
+
 ## Deployment
 
-If the deployment is successful, you should see the following:
+When you push to your default branch, the Mintlify GitHub app runs checks and deploys your site. A successful deployment looks like this:
 
-<Frame>
+<Frame caption="All checks passed — your docs are live.">
   <img src="/images/checks-passed.png" alt="Screenshot of a deployment confirmation message that says All checks have passed." style={{ borderRadius: '0.5rem' }} />
 </Frame>
 
 ## Code formatting
 
-We suggest using extensions on your IDE to recognize and format MDX. If you're a VSCode user, consider the [MDX VSCode extension](https://marketplace.visualstudio.com/items?itemName=unifiedjs.vscode-mdx) for syntax highlighting, and [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) for code formatting.
+For a better editing experience, install these VSCode extensions:
+
+- [MDX](https://marketplace.visualstudio.com/items?itemName=unifiedjs.vscode-mdx) — syntax highlighting for `.mdx` files
+- [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) — automatic code formatting on save
 
 ## Troubleshooting
 
 <AccordionGroup>
   <Accordion title='Error: Could not load the "sharp" module using the darwin-arm64 runtime'>
+    This error usually means your Node.js version is too old. Fix it by reinstalling the CLI against a supported Node version:
 
-    This may be due to an outdated version of node. Try the following:
-    1. Remove the currently-installed version of the CLI: `npm remove -g mint`
-    2. Upgrade to Node v19 or higher.
+    1. Remove the current CLI: `npm remove -g mint`
+    2. Upgrade Node.js to v19 or higher.
     3. Reinstall the CLI: `npm i -g mint`
   </Accordion>
 
-  <Accordion title="Issue: Encountering an unknown error">
-  
-    Solution: Go to the root of your device and delete the `~/.mintlify` folder. Then run `mint dev` again.
+  <Accordion title="Unknown error when running mint dev">
+    A corrupted local cache can cause unexpected errors. Clear it and restart:
+
+    1. Delete the cache directory: `rm -rf ~/.mintlify`
+    2. Run `mint dev` again.
+
+    <Warning>This only removes cached CLI data — your docs content is not affected.</Warning>
+  </Accordion>
+
+  <Accordion title="Local preview doesn't match the production site">
+    Your CLI version may be out of sync with the deployed Mintlify version. Run `npm mint update` to pull the latest CLI, then restart the dev server with `mint dev`.
   </Accordion>
 </AccordionGroup>
-
-Curious about what changed in the latest CLI version? Check out the [CLI changelog](https://www.npmjs.com/package/mintlify?activeTab=versions).

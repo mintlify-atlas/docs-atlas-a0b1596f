@@ -1,88 +1,198 @@
 ---
 title: 'Markdown syntax'
-description: 'Text, title, and styling in standard markdown'
+description: 'Format text with headings, lists, tables, links, and more in MDX pages.'
 icon: 'text-size'
 ---
 
-## Titles
+Mintlify pages are written in MDX — a superset of Markdown that lets you use React components alongside standard formatting. Everything you know from Markdown works here, plus you get access to Mintlify's component library.
 
-Best used for section headers.
+## Headings
 
-```md
-## Titles
-```
-
-### Subtitles
-
-Best used for subsection headers.
+Use `#` symbols to create headings. Mintlify supports H1 through H4. Each heading automatically generates an anchor link and appears in the right-hand table of contents.
 
 ```md
-### Subtitles
+# H1 — page title (use in frontmatter `title`, not in body)
+## H2 — major section
+### H3 — subsection
+#### H4 — minor subsection
 ```
 
 <Tip>
-
-Each **title** and **subtitle** creates an anchor and also shows up on the table of contents on the right.
-
+Avoid using H1 (`#`) in the body of your page. Mintlify renders the `title` frontmatter field as the page's H1. Adding another H1 in the body creates duplicate top-level headings.
 </Tip>
 
 ## Text formatting
 
-We support most markdown formatting. Simply add `**`, `_`, or `~` around text to format it.
+Wrap text with the following markers to apply inline styles:
 
-| Style         | How to write it   | Result          |
+| Style         | Syntax            | Result          |
 | ------------- | ----------------- | --------------- |
 | Bold          | `**bold**`        | **bold**        |
 | Italic        | `_italic_`        | _italic_        |
 | Strikethrough | `~strikethrough~` | ~strikethrough~ |
+| Inline code   | `` `code` ``      | `code`          |
 
-You can combine these. For example, write `**_bold and italic_**` to get **_bold and italic_** text.
+You can combine styles. For example, `**_bold and italic_**` renders as **_bold and italic_**.
 
-You need to use HTML to write superscript and subscript text. That is, add `<sup>` or `<sub>` around your text.
+For superscript and subscript, use HTML tags directly in your MDX:
 
-| Text Size   | How to write it          | Result                 |
+| Style       | Syntax                   | Result                 |
 | ----------- | ------------------------ | ---------------------- |
 | Superscript | `<sup>superscript</sup>` | <sup>superscript</sup> |
 | Subscript   | `<sub>subscript</sub>`   | <sub>subscript</sub>   |
 
-## Linking to pages
+## Lists
 
-You can add a link by wrapping text in `[]()`. You would write `[link to google](https://google.com)` to [link to google](https://google.com).
+### Unordered lists
 
-Links to pages in your docs need to be root-relative. Basically, you should include the entire folder path. For example, `[link to text](/writing-content/text)` links to the page "Text" in our components section.
+Use `-` or `*` to create bullet points:
 
-Relative links like `[link to text](../text)` will open slower because we cannot optimize them as easily.
+```md
+- First item
+- Second item
+  - Nested item
+  - Another nested item
+- Third item
+```
+
+### Ordered lists
+
+Use numbers followed by `.` for numbered steps:
+
+```md
+1. Install dependencies
+2. Configure your environment
+3. Start the development server
+```
+
+<Note>
+For procedural steps that the reader must follow in order, consider using the `<Steps>` component instead. It renders as a styled numbered list with titles for each step.
+</Note>
 
 ## Blockquotes
 
-### Singleline
-
-To create a blockquote, add a `>` in front of a paragraph.
-
-> Dorothy followed her through many of the beautiful rooms in her castle.
+Add `>` before a line to create a blockquote. Use a blank `>` line to create multi-paragraph quotes:
 
 ```md
-> Dorothy followed her through many of the beautiful rooms in her castle.
-```
+> Single-line blockquote.
 
-### Multiline
-
-> Dorothy followed her through many of the beautiful rooms in her castle.
+> First paragraph of a multi-line quote.
 >
-> The Witch bade her clean the pots and kettles and sweep the floor and keep the fire fed with wood.
+> Second paragraph continues here.
+```
 
-```md
-> Dorothy followed her through many of the beautiful rooms in her castle.
+Blockquotes render as:
+
+> Single-line blockquote.
+
+> First paragraph of a multi-line quote.
 >
-> The Witch bade her clean the pots and kettles and sweep the floor and keep the fire fed with wood.
-```
+> Second paragraph continues here.
 
-### LaTeX
+<Tip>
+For callouts that highlight important information, use Mintlify's `<Note>`, `<Tip>`, `<Warning>`, or `<Info>` components instead of blockquotes. They render with icons and colored borders.
+</Tip>
 
-Mintlify supports [LaTeX](https://www.latex-project.org) through the Latex component.
+## Links
 
-<Latex>8 x (vk x H1 - H2) = (0,1)</Latex>
+### External links
+
+Wrap the link text in `[]` and the URL in `()`:
 
 ```md
-<Latex>8 x (vk x H1 - H2) = (0,1)</Latex>
+[Mintlify documentation](https://mintlify.com/docs)
 ```
+
+### Internal links
+
+For links to other pages in your docs, use root-relative paths without the `.mdx` extension:
+
+```md
+[Code blocks](/essentials/code)
+[Images and embeds](/essentials/images)
+[Reusable snippets](/essentials/reusable-snippets)
+```
+
+<Warning>
+Do not use relative paths like `../images` for internal links. Mintlify cannot optimize relative paths, which slows page loads. Always use root-relative paths starting with `/`.
+</Warning>
+
+## Tables
+
+Use pipes (`|`) and hyphens (`-`) to build tables. Colons in the separator row control column alignment:
+
+```md
+| Name    | Type    | Required | Description          |
+| ------- | ------- | -------- | -------------------- |
+| `title` | string  | Yes      | The page title.      |
+| `icon`  | string  | No       | A Lucide icon name.  |
+| `tag`   | string  | No       | Sidebar label text.  |
+```
+
+Rendered:
+
+| Name    | Type   | Required | Description         |
+| ------- | ------ | -------- | ------------------- |
+| `title` | string | Yes      | The page title.     |
+| `icon`  | string | No       | A Lucide icon name. |
+| `tag`   | string | No       | Sidebar label text. |
+
+For left, center, or right alignment, add `:` to the separator:
+
+```md
+| Left-aligned | Center-aligned | Right-aligned |
+| :----------- | :------------: | ------------: |
+| content      |    content     |       content |
+```
+
+## HTML in MDX
+
+MDX supports inline HTML, which is useful for formatting that Markdown alone cannot express:
+
+```html
+<!-- Line break -->
+<br />
+
+<!-- Image with inline styles -->
+<img src="/images/screenshot.png" alt="App screenshot" style={{ borderRadius: '0.5rem' }} />
+
+<!-- Colored text -->
+<span style={{ color: '#54545c' }}>Custom colored text</span>
+
+<!-- Superscript / subscript -->
+H<sub>2</sub>O and E = mc<sup>2</sup>
+```
+
+<Info>
+When writing inline styles in MDX, use the JSX object syntax (`style={{ ... }}`) rather than HTML string syntax (`style="..."`). MDX compiles to JavaScript, so CSS property names must be camelCase — `borderRadius` not `border-radius`.
+</Info>
+
+## Frontmatter
+
+Every page starts with a YAML frontmatter block between `---` delimiters. Mintlify reads this to build navigation, set page metadata, and configure display options.
+
+```yaml
+---
+title: 'Getting started'
+description: 'Set up your environment and write your first page.'
+icon: 'rocket'
+sidebarTitle: 'Quickstart'
+tag: 'NEW'
+---
+```
+
+The most commonly used frontmatter fields:
+
+| Field          | Type    | Description                                                    |
+| -------------- | ------- | -------------------------------------------------------------- |
+| `title`        | string  | Page title shown in the sidebar and browser tab.               |
+| `description`  | string  | Short summary shown below the title and used for SEO.          |
+| `icon`         | string  | Lucide, Font Awesome, or Tabler icon name displayed in the sidebar. |
+| `sidebarTitle` | string  | Shorter title shown only in the sidebar when `title` is long.  |
+| `tag`          | string  | Small label next to the page title in the sidebar (e.g., `NEW`). |
+| `hidden`       | boolean | Hides the page from the sidebar while keeping it accessible by URL. |
+| `mode`         | string  | Page layout: `default`, `wide`, `custom`, `center`.            |
+
+<Tip>
+Always include both `title` and `description`. The `description` field populates the meta description tag, which improves search engine visibility and the in-site search experience.
+</Tip>

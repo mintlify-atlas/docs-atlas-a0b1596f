@@ -1,35 +1,226 @@
 ---
 title: 'Code blocks'
-description: 'Display inline code and code blocks'
+description: 'Syntax-highlighted code blocks with titles, line numbers, highlights, diffs, and multi-language groups.'
 icon: 'code'
 ---
 
+Mintlify renders code blocks with syntax highlighting, line numbers, copy buttons, and a range of display options. Every code block should have a language tag — without one, you lose syntax highlighting and the copy button style changes.
+
 ## Inline code
 
-To denote a `word` or `phrase` as code, enclose it in backticks (`).
+To mark a word or phrase as code within a sentence, wrap it in backticks:
 
+```md
+Run `mint dev` to start the local preview server.
 ```
-To denote a `word` or `phrase` as code, enclose it in backticks (`).
-```
 
-## Code blocks
+This renders as: Run `mint dev` to start the local preview server.
 
-Use [fenced code blocks](https://www.markdownguide.org/extended-syntax/#fenced-code-blocks) by enclosing code in three backticks and follow the leading ticks with the programming language of your snippet to get syntax highlighting. Optionally, you can also write the name of your code after the programming language.
+## Basic code blocks
 
-```java HelloWorld.java
-class HelloWorld {
-    public static void main(String[] args) {
-        System.out.println("Hello, World!");
-    }
-}
-```
+Fence your code with three backticks and add the language name immediately after the opening fence:
 
 ````md
-```java HelloWorld.java
-class HelloWorld {
-    public static void main(String[] args) {
-        System.out.println("Hello, World!");
-    }
+```python
+def greet(name: str) -> str:
+    return f"Hello, {name}!"
+```
+````
+
+Mintlify supports all common language tags: `javascript`, `typescript`, `python`, `bash`, `json`, `yaml`, `html`, `css`, `sql`, `go`, `rust`, `java`, `mdx`, `md`, and many more.
+
+## Titles and filenames
+
+Add a filename or title after the language tag to label the code block. This is displayed as a tab above the code:
+
+````md
+```typescript src/utils/greet.ts
+export function greet(name: string): string {
+  return `Hello, ${name}!`;
 }
 ```
 ````
+
+Rendered:
+
+```typescript src/utils/greet.ts
+export function greet(name: string): string {
+  return `Hello, ${name}!`;
+}
+```
+
+## Line numbers
+
+Add the `lines` prop to display line numbers on the left side of the block:
+
+````md
+```python lines
+def fibonacci(n: int) -> int:
+    if n <= 1:
+        return n
+    return fibonacci(n - 1) + fibonacci(n - 2)
+```
+````
+
+## Line highlighting
+
+Use `highlight` to draw attention to specific lines. Pass a single line number, a range, or a comma-separated list:
+
+````md
+```javascript highlight={3}
+const express = require('express');
+const app = express();
+app.listen(3000, () => console.log('Server running'));
+```
+````
+
+To highlight multiple ranges:
+
+````md
+```python highlight={1,4-6}
+import os  # highlighted
+
+def load_config():
+    host = os.getenv('HOST')       # highlighted
+    port = int(os.getenv('PORT'))  # highlighted
+    return host, port              # highlighted
+```
+````
+
+## Focus
+
+The `focus` prop dims all lines except the ones you specify, helping readers find the relevant part in a longer block:
+
+````md
+```yaml focus={4-6}
+name: KarChunT Docs
+theme: mint
+colors:
+  primary: '#54545c'  # focused
+logo:
+  light: /logo/light.svg  # focused
+  dark: /logo/dark.svg    # focused
+```
+````
+
+## Diff markers
+
+Show added and removed lines using diff markers as inline comments. Lines marked with `// [!code ++]` render green; lines marked with `// [!code --]` render red:
+
+````md
+```javascript
+function fetchUser(id) {
+  return fetch(`/api/users/${id}`) // [!code --]
+  return fetch(`/api/v2/users/${id}`) // [!code ++]
+    .then(res => res.json());
+}
+```
+````
+
+<Note>
+Diff markers work with any language that supports `//` comments. For other languages, the marker syntax adapts: use `# [!code ++]` for Python, `-- [!code ++]` for SQL, and so on.
+</Note>
+
+## Multi-language groups
+
+Use `<CodeGroup>` to display the same example in multiple languages. Readers can switch between tabs:
+
+````mdx
+<CodeGroup>
+
+```bash npm
+npm install @mintlify/cli
+```
+
+```bash yarn
+yarn add @mintlify/cli
+```
+
+```bash pnpm
+pnpm add @mintlify/cli
+```
+
+</CodeGroup>
+````
+
+Rendered:
+
+<CodeGroup>
+
+```bash npm
+npm install @mintlify/cli
+```
+
+```bash yarn
+yarn add @mintlify/cli
+```
+
+```bash pnpm
+pnpm add @mintlify/cli
+```
+
+</CodeGroup>
+
+`<CodeGroup>` tabs automatically sync with `<Tabs>` components on the same page that share matching tab titles — selecting **npm** in one place selects it everywhere.
+
+## Expandable code blocks
+
+Long code blocks can be collapsed by default with the `expandable` prop. Readers see the first few lines and click to reveal the rest:
+
+````md
+```python expandable
+import json
+import os
+from pathlib import Path
+from typing import Any, Dict, Optional
+
+
+def load_config(path: Optional[str] = None) -> Dict[str, Any]:
+    config_path = Path(path or os.getenv('CONFIG_PATH', 'config.json'))
+    if not config_path.exists():
+        raise FileNotFoundError(f'Config file not found: {config_path}')
+    with config_path.open() as f:
+        return json.load(f)
+
+
+def merge_configs(*configs: Dict[str, Any]) -> Dict[str, Any]:
+    result: Dict[str, Any] = {}
+    for config in configs:
+        result.update(config)
+    return result
+```
+````
+
+## Long line wrapping
+
+By default, long lines overflow horizontally with a scroll bar. Add `wrap` to wrap long lines instead:
+
+````md
+```bash wrap
+curl -X POST https://api.example.com/v1/users -H "Authorization: Bearer TOKEN" -H "Content-Type: application/json" -d '{"name": "Ada Lovelace", "email": "ada@example.com"}'
+```
+````
+
+## TypeScript type hints with Twoslash
+
+Add `twoslash` to a TypeScript block to enable hover-over type information. Mintlify runs the TypeScript compiler and injects inferred types into the rendered output:
+
+````md
+```typescript twoslash
+interface User {
+  id: string;
+  name: string;
+  role: 'admin' | 'member';
+}
+
+function getRole(user: User) {
+  return user.role;
+  //     ^
+  // Hover to see: (property) User.role: "admin" | "member"
+}
+```
+````
+
+<Info>
+Twoslash requires valid TypeScript that the compiler can type-check. If the code has unresolved imports or type errors, the twoslash annotations will not render.
+</Info>

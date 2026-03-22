@@ -1,33 +1,62 @@
 ---
 title: 'Introduction'
-description: 'Example section for showcasing API endpoints'
+description: 'Overview and authentication guide for the Plant Store API.'
 ---
 
-<Note>
-  If you're not looking to build API reference documentation, you can delete
-  this section by removing the api-reference folder.
-</Note>
+## Overview
 
-## Welcome
+The Plant Store API is a sample REST API that demonstrates features of the OpenAPI specification. It lets you retrieve, create, and delete plant records in a store. The API follows standard HTTP conventions and returns JSON responses.
 
-There are two ways to build API documentation: [OpenAPI](https://mintlify.com/docs/api-playground/openapi/setup) and [MDX components](https://mintlify.com/docs/api-playground/mdx/configuration). For the starter kit, we are using the following OpenAPI specification.
+Base URL:
 
-<Card
-  title="Plant Store Endpoints"
-  icon="leaf"
-  href="https://github.com/mintlify/starter/blob/main/api-reference/openapi.json"
->
-  View the OpenAPI specification file
-</Card>
+```
+http://sandbox.mintlify.com
+```
 
 ## Authentication
 
-All API endpoints are authenticated using Bearer tokens and picked up from the specification file.
+All endpoints require a Bearer token passed in the `Authorization` header. The token is validated against the security scheme defined in the OpenAPI spec.
+
+```bash
+Authorization: Bearer <your-token>
+```
+
+If you omit the token or supply an invalid one, the API returns a `400` error response.
+
+## Building API docs
+
+There are two ways to build API reference pages with Mintlify:
+
+- **OpenAPI spec** — Point Mintlify at an `openapi.json` or `openapi.yaml` file and it generates interactive playground pages automatically. Each endpoint page uses the `openapi` frontmatter field to bind to a specific operation.
+- **MDX components** — Write endpoint pages manually using `<ParamField>` and `<ResponseField>` components. This approach gives you full control over the page content and layout.
+
+This API reference uses the OpenAPI approach. The spec file defines all endpoints, schemas, and authentication.
+
+<Card
+  title="Plant Store OpenAPI spec"
+  icon="leaf"
+  href="https://github.com/mintlify/starter/blob/main/api-reference/openapi.json"
+>
+  View the full OpenAPI 3.1.0 specification for the Plant Store API.
+</Card>
+
+## Error responses
+
+All error responses use the following JSON structure:
+
+<ResponseField name="error" type="integer" required>
+  HTTP-style error code identifying the type of failure.
+</ResponseField>
+
+<ResponseField name="message" type="string" required>
+  Human-readable description of what went wrong.
+</ResponseField>
+
+Example error response:
 
 ```json
-"security": [
-  {
-    "bearerAuth": []
-  }
-]
+{
+  "error": 400,
+  "message": "Invalid request body"
+}
 ```

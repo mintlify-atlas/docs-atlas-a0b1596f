@@ -1,110 +1,180 @@
 ---
-title: "Reusable snippets"
-description: "Reusable, custom snippets to keep content in sync"
-icon: "recycle"
+title: 'Reusable snippets'
+description: 'Write content once and reuse it across multiple pages to keep your docs consistent and easy to maintain.'
+icon: 'recycle'
 ---
 
-import SnippetIntro from '/snippets/snippet-intro.mdx';
+One of the core principles of software development is DRY (Don't Repeat Yourself). This principle applies equally to documentation. If you find yourself copying the same warning, prerequisite list, or installation steps into multiple pages, create a snippet instead. When you update the snippet, every page that uses it updates automatically.
 
-<SnippetIntro />
+## How snippets work
 
-## Creating a custom snippet
+A snippet is an `.mdx` file stored in the `snippets/` directory. Mintlify treats every file in that directory as a reusable component — it will not render snippet files as standalone pages in your docs.
 
-**Pre-condition**: You must create your snippet file in the `snippets` directory.
+To use a snippet, import it at the top of your destination page and render it as a JSX component:
+
+```mdx
+import MySnippet from '/snippets/my-snippet.mdx';
+
+<MySnippet />
+```
 
 <Note>
-  Any page in the `snippets` directory will be treated as a snippet and will not
-  be rendered into a standalone page. If you want to create a standalone page
-  from the snippet, import the snippet into another file and call it as a
-  component.
+Snippet files must live inside the `snippets/` directory. Imports from other directories will not work. The `snippets/` directory itself does not appear in your site navigation.
 </Note>
 
-### Default export
+## Creating a snippet
 
-1. Add content to your snippet file that you want to re-use across multiple
-   locations. Optionally, you can add variables that can be filled in via props
-   when you import the snippet.
+Create a new `.mdx` file in the `snippets/` directory. Write whatever content you want to reuse:
 
-```mdx snippets/my-snippet.mdx
-Hello world! This is my content I want to reuse across pages. My keyword of the
-day is {word}.
+```mdx snippets/prerequisites.mdx
+Before you begin, make sure you have:
+
+- Node.js 18 or later installed
+- A Mintlify account
+- The Mintlify CLI: `npm i -g mint`
 ```
 
-<Warning>
-  The content that you want to reuse must be inside the `snippets` directory in
-  order for the import to work.
-</Warning>
+Then import and use it in any page:
 
-2. Import the snippet into your destination file.
-
-```mdx destination-file.mdx
+```mdx essentials/quickstart.mdx
 ---
-title: My title
-description: My Description
+title: Quickstart
+description: Get your docs site running in minutes.
 ---
 
-import MySnippet from '/snippets/path/to/my-snippet.mdx';
+import Prerequisites from '/snippets/prerequisites.mdx';
 
-## Header
+## Before you begin
 
-Lorem impsum dolor sit amet.
+<Prerequisites />
 
-<MySnippet word="bananas" />
+## Step 1: Initialize your project
+...
 ```
 
-### Reusable variables
+## Passing variables to snippets
 
-1. Export a variable from your snippet file:
+Snippets can accept props, letting you customize content without duplicating the snippet file. Use curly braces to reference prop values inside the snippet:
 
-```mdx snippets/path/to/custom-variables.mdx
-export const myName = 'my name';
+<Steps>
+  <Step title="Define the snippet with a variable">
 
-export const myObject = { fruit: 'strawberries' };
+```mdx snippets/api-note.mdx
+The `{endpoint}` endpoint requires an API key. Pass it in the `Authorization` header as a Bearer token.
 ```
 
-2. Import the snippet from your destination file and use the variable:
+  </Step>
+  <Step title="Import and pass the prop">
 
-```mdx destination-file.mdx
+```mdx essentials/api-reference.mdx
 ---
-title: My title
-description: My Description
+title: API reference
 ---
 
-import { myName, myObject } from '/snippets/path/to/custom-variables.mdx';
+import ApiNote from '/snippets/api-note.mdx';
 
-Hello, my name is {myName} and I like {myObject.fruit}.
+## Create a user
+
+<ApiNote endpoint="POST /users" />
+
+## Delete a user
+
+<ApiNote endpoint="DELETE /users/{id}" />
 ```
 
-### Reusable components
+  </Step>
+</Steps>
 
-1. Inside your snippet file, create a component that takes in props by exporting
-   your component in the form of an arrow function.
+## Reusable variables
 
-```mdx snippets/custom-component.mdx
-export const MyComponent = ({ title }) => (
-  <div>
-    <h1>{title}</h1>
-    <p>... snippet content ...</p>
+Export JavaScript variables from a snippet file and import them by name. This is useful for version numbers, product names, or any value that appears in many places:
+
+<Steps>
+  <Step title="Export variables from the snippet">
+
+```mdx snippets/product-info.mdx
+export const version = '2.4.0';
+export const cliCommand = 'mint';
+export const supportEmail = 'support@example.com';
+```
+
+  </Step>
+  <Step title="Import the variables into your page">
+
+```mdx index.mdx
+---
+title: Home
+---
+
+import { version, cliCommand, supportEmail } from '/snippets/product-info.mdx';
+
+Welcome to the docs for version **{version}**.
+
+Run `{cliCommand} dev` to start the local preview server.
+
+For help, contact us at {supportEmail}.
+```
+
+  </Step>
+</Steps>
+
+## Reusable components
+
+For more advanced cases, export an arrow function component from a snippet. This lets you compose HTML layouts that accept props:
+
+<Steps>
+  <Step title="Define the component in the snippet">
+
+```mdx snippets/callout-card.mdx
+export const CalloutCard = ({ title, description }) => (
+  <div style={{ border: '1px solid #e5e7eb', borderRadius: '0.5rem', padding: '1rem' }}>
+    <strong>{title}</strong>
+    <p>{description}</p>
   </div>
 );
 ```
 
 <Warning>
-  MDX does not compile inside the body of an arrow function. Stick to HTML
-  syntax when you can or use a default export if you need to use MDX.
+MDX syntax (like `**bold**` or `<Note>`) does not compile inside arrow function bodies. Use HTML elements like `<strong>`, `<p>`, and `<em>` inside components, or switch to a default export if you need MDX.
 </Warning>
 
-2. Import the snippet into your destination file and pass in the props
+  </Step>
+  <Step title="Import and render the component">
 
-```mdx destination-file.mdx
+```mdx guides/features.mdx
 ---
-title: My title
-description: My Description
+title: Features
 ---
 
-import { MyComponent } from '/snippets/custom-component.mdx';
+import { CalloutCard } from '/snippets/callout-card.mdx';
 
-Lorem ipsum dolor sit amet.
+<CalloutCard
+  title="Zero configuration"
+  description="Mintlify works out of the box with sensible defaults for every setting."
+/>
 
-<MyComponent title={'Custom title'} />
+<CalloutCard
+  title="Hot reload"
+  description="Changes to your MDX files appear instantly in the local preview."
+/>
 ```
+
+  </Step>
+</Steps>
+
+## Best practices
+
+<AccordionGroup>
+  <Accordion title="Keep snippets focused">
+    Each snippet should contain one logical piece of content — a prerequisite list, a warning about a specific behavior, or a version badge. Avoid creating large all-purpose snippets that are hard to update without unintended side effects.
+  </Accordion>
+  <Accordion title="Name snippets descriptively">
+    Use names that describe what the snippet contains, not where it is used. `prerequisites.mdx` is better than `quickstart-top.mdx` because the same prerequisites might appear on several pages.
+  </Accordion>
+  <Accordion title="Prefer default exports for MDX content">
+    If your snippet contains MDX (Mintlify components, formatted text, headings), use a default export — that is, just write the content in the file body. Reserve arrow function components for pure HTML layouts.
+  </Accordion>
+  <Accordion title="Use variables for values that change">
+    Product version numbers, CLI command names, and support contact details change over time. Export them as named variables from a single snippet so you only update one file when they change.
+  </Accordion>
+</AccordionGroup>

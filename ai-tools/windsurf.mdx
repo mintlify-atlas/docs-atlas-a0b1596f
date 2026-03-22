@@ -1,39 +1,53 @@
 ---
 title: "Windsurf setup"
-description: "Configure Windsurf for your documentation workflow"
-icon: "water"
+description: "Configure Windsurf's Cascade agent to write and maintain your Mintlify documentation."
+icon: "wind"
 ---
 
-Set up Windsurf's Cascade AI assistant to help you write and maintain your Mintlify documentation.
+Windsurf is an AI-native editor with a built-in agentic assistant called Cascade. You can configure Cascade to draft, reorganize, and maintain your Mintlify documentation with awareness of your project's structure, style, and component library.
 
 ## Prerequisites
 
-- Windsurf editor installed
+- [Windsurf](https://codeium.com/windsurf) editor installed
 
 ## Setup
 
 <Steps>
-<Step title="Open your docs directory in Windsurf">
-  Open the root of your documentation repository where `docs.json` is located.
-</Step>
+  <Step title="Open your docs directory in Windsurf">
+    Open the root of your documentation repository — the folder that contains `docs.json`. Windsurf indexes your workspace on open, giving Cascade full context over your existing pages and navigation.
+  </Step>
 
-<Step title="Install the Mintlify skill">
-  In the integrated terminal, run:
+  <Step title="Install the Mintlify skill">
+    In the integrated terminal, run:
 
-  ```bash
-  npx skills add https://mintlify.com/docs
-  ```
+    ```bash
+    npx skills add https://mintlify.com/docs
+    ```
 
-  This gives Windsurf Mintlify's component reference, writing standards,
-  and workflow guidance.
-</Step>
+    This adds a skill file to your project that teaches Cascade Mintlify's component syntax, frontmatter requirements, and documentation conventions. Cascade reads it automatically when you start a new task.
+  </Step>
 
-<Step title="Customize project instructions">
-  Edit `AGENTS.md` in your project root to add project-specific terminology,
-  style preferences, and content boundaries.
-</Step>
+  <Step title="Customize AGENTS.md">
+    Open `AGENTS.md` in your project root and tailor it to your project:
 
-<Step title="Start writing with Cascade">
-  Open a file and use Cascade to draft and edit documentation.
-</Step>
+    - **Terminology** — specify preferred product names and terms to avoid
+    - **Style rules** — tone, heading case, link format, and sentence length
+    - **Content boundaries** — any pages or sections Cascade should leave untouched
+
+    Cascade uses this file as standing instructions for every documentation task in the workspace.
+  </Step>
+
+  <Step title="Use Cascade to draft and maintain docs">
+    Open the Cascade panel and describe what you need. For example:
+
+    - "Create a new page explaining how to set up SSO and add it to the Security section."
+    - "Review all pages in `guides/` and make the headings consistent with sentence case."
+    - "Add a `<Warning>` callout to `deployment.mdx` before the production step."
+
+    Cascade will read relevant files, apply changes across multiple pages, and explain each edit.
+  </Step>
 </Steps>
+
+<Tip>
+  Cascade's agentic multi-file editing is especially useful for large doc sets. You can ask it to apply a style change or add a component across dozens of pages in a single instruction, rather than editing each file manually.
+</Tip>

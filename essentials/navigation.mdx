@@ -1,49 +1,97 @@
 ---
 title: 'Navigation'
-description: 'The navigation field in docs.json defines the pages that go in the navigation menu'
+description: 'Structure your sidebar using tabs, groups, and pages defined in docs.json. Learn how file paths map to URLs and how to use global anchors.'
 icon: 'map'
 ---
 
-The navigation menu is the list of links on every website.
+Mintlify builds your sidebar from the `navigation` object in `docs.json`. Pages do not appear in the sidebar automatically — you must add each page to the navigation structure.
 
-You will likely update `docs.json` every time you add a new page. Pages do not show up automatically.
+<Note>
+You will edit `docs.json` every time you add a new page. New MDX files that are not listed in `navigation` are accessible by URL and through search, but they will not appear in the sidebar.
+</Note>
 
-## Navigation syntax
+## How file paths map to URLs
 
-Our navigation syntax is recursive which means you can make nested navigation groups. You don't need to include `.mdx` in page names.
+Page paths in `docs.json` correspond directly to file paths relative to your project root. Omit the `.mdx` extension.
+
+| File path | Page path in docs.json | URL |
+|---|---|---|
+| `index.mdx` | `"index"` | `/` |
+| `quickstart.mdx` | `"quickstart"` | `/quickstart` |
+| `guides/setup.mdx` | `"guides/setup"` | `/guides/setup` |
+| `api/reference/users.mdx` | `"api/reference/users"` | `/api/reference/users` |
+
+<Warning>
+Do not use `api` as a top-level folder name. Mintlify runs on Next.js, which reserves the top-level `api` folder for internal server routes. Use a name like `api-reference` instead.
+</Warning>
+
+## Groups
+
+Groups are the basic unit of sidebar organization. Each group has a title and an array of page paths.
 
 <CodeGroup>
 
-```json Regular Navigation
+```json docs.json
 "navigation": {
-  "tabs": [
+  "groups": [
     {
-      "tab": "Docs",
-      "groups": [
-        {
-          "group": "Getting Started",
-          "pages": ["quickstart"]
-        }
+      "group": "Getting started",
+      "pages": ["index", "quickstart"]
+    },
+    {
+      "group": "Essentials",
+      "pages": [
+        "essentials/settings",
+        "essentials/navigation"
       ]
     }
   ]
 }
 ```
 
-```json Nested Navigation
+</CodeGroup>
+
+### Group properties
+
+<ResponseField name="group" type="string" required>
+  The section title displayed in the sidebar.
+</ResponseField>
+
+<ResponseField name="pages" type="string[] | (string | Group)[]" required>
+  An array of page paths. You can nest a group object inside `pages` to create a collapsible sub-group.
+</ResponseField>
+
+<ResponseField name="icon" type="string">
+  An icon displayed next to the group title. Accepts Lucide, Font Awesome, or Tabler icon names.
+</ResponseField>
+
+<ResponseField name="tag" type="string">
+  A label displayed next to the group name. Useful for marking sections as new or beta.
+</ResponseField>
+
+<ResponseField name="expanded" type="boolean">
+  Controls the default open state for nested groups. Top-level groups are always expanded.
+</ResponseField>
+
+### Nested groups
+
+You can nest a group inside a `pages` array to create a collapsible sub-section.
+
+<CodeGroup>
+
+```json docs.json
 "navigation": {
-  "tabs": [
+  "groups": [
     {
-      "tab": "Docs",
-      "groups": [
+      "group": "Guides",
+      "pages": [
+        "guides/overview",
         {
-          "group": "Getting Started",
+          "group": "Advanced",
+          "expanded": false,
           "pages": [
-            "quickstart",
-            {
-              "group": "Nested Reference Pages",
-              "pages": ["nested-reference-page"]
-            }
+            "guides/advanced/config",
+            "guides/advanced/deploy"
           ]
         }
       ]
@@ -54,27 +102,128 @@ Our navigation syntax is recursive which means you can make nested navigation gr
 
 </CodeGroup>
 
-## Folders
+## Tabs
 
-Simply put your MDX files in folders and update the paths in `docs.json`.
+Tabs add a top-level navigation bar below the navbar. Use tabs when you have distinct sections with different audiences or content types, such as documentation and an API reference.
 
-For example, to have a page at `https://yoursite.com/your-folder/your-page` you would make a folder called `your-folder` containing an MDX file called `your-page.mdx`.
+Each tab contains `groups` or a flat `pages` array. You can also link a tab to an external URL.
 
-<Warning>
+<CodeGroup>
 
-You cannot use `api` for the name of a folder unless you nest it inside another folder. Mintlify uses Next.js which reserves the top-level `api` folder for internal server calls. A folder name such as `api-reference` would be accepted.
-
-</Warning>
-
-```json Navigation With Folder
+```json docs.json
 "navigation": {
   "tabs": [
     {
-      "tab": "Docs",
+      "tab": "Documentation",
+      "icon": "book-open",
       "groups": [
         {
-          "group": "Group Name",
-          "pages": ["your-folder/your-page"]
+          "group": "Getting started",
+          "pages": ["index", "quickstart"]
+        },
+        {
+          "group": "Essentials",
+          "pages": ["essentials/settings", "essentials/navigation"]
+        }
+      ]
+    },
+    {
+      "tab": "API reference",
+      "icon": "square-terminal",
+      "pages": ["api-reference/overview", "api-reference/endpoints"]
+    },
+    {
+      "tab": "Blog",
+      "icon": "newspaper",
+      "href": "https://example.com/blog"
+    }
+  ]
+}
+```
+
+</CodeGroup>
+
+### Tab properties
+
+<ResponseField name="tab" type="string" required>
+  The tab label displayed in the tab bar.
+</ResponseField>
+
+<ResponseField name="groups" type="Group[]">
+  An array of groups shown in the sidebar when this tab is active.
+</ResponseField>
+
+<ResponseField name="pages" type="string[]">
+  A flat list of pages when you do not need groups within a tab.
+</ResponseField>
+
+<ResponseField name="href" type="string">
+  An external URL. The tab acts as a link instead of switching sidebar content.
+</ResponseField>
+
+<ResponseField name="icon" type="string">
+  An icon displayed next to the tab label.
+</ResponseField>
+
+## Anchors
+
+Anchors are persistent links pinned to the top of the sidebar. They remain visible regardless of which tab or section is active, making them ideal for links like a changelog, community forum, or status page.
+
+<CodeGroup>
+
+```json docs.json
+"navigation": {
+  "anchors": [
+    {
+      "anchor": "Changelog",
+      "icon": "list",
+      "groups": [
+        {
+          "group": "Releases",
+          "pages": ["changelog/2024", "changelog/2023"]
+        }
+      ]
+    },
+    {
+      "anchor": "Community",
+      "icon": "discord",
+      "href": "https://discord.gg/example"
+    }
+  ]
+}
+```
+
+</CodeGroup>
+
+### Global anchors
+
+Global anchors appear on every page, even when the user is inside a tab or product section. Define them under `navigation.global.anchors`.
+
+<CodeGroup>
+
+```json docs.json
+"navigation": {
+  "global": {
+    "anchors": [
+      {
+        "anchor": "Changelog",
+        "icon": "list",
+        "href": "/changelog"
+      },
+      {
+        "anchor": "Support",
+        "icon": "life-ring",
+        "href": "https://example.com/support"
+      }
+    ]
+  },
+  "tabs": [
+    {
+      "tab": "Documentation",
+      "groups": [
+        {
+          "group": "Getting started",
+          "pages": ["index", "quickstart"]
         }
       ]
     }
@@ -82,6 +231,72 @@ You cannot use `api` for the name of a folder unless you nest it inside another 
 }
 ```
 
+</CodeGroup>
+
+## Choosing a navigation pattern
+
+Mintlify supports several navigation patterns. Use the simplest one that meets your needs.
+
+<AccordionGroup>
+  <Accordion title="Groups — default choice">
+    Use groups when your site has a single audience and a straightforward hierarchy. Groups appear directly in the sidebar with no top-level tabs.
+
+    ```json
+    "navigation": {
+      "groups": [
+        { "group": "Getting started", "pages": ["index", "quickstart"] }
+      ]
+    }
+    ```
+  </Accordion>
+
+  <Accordion title="Tabs — distinct content types">
+    Use tabs when you have sections with different audiences or purposes, such as user guides and an API reference. Each tab has its own sidebar.
+
+    ```json
+    "navigation": {
+      "tabs": [
+        { "tab": "Guides", "groups": [{"group": "Start", "pages": ["index"]}] },
+        { "tab": "API", "pages": ["api/overview"] }
+      ]
+    }
+    ```
+  </Accordion>
+
+  <Accordion title="Anchors — persistent sidebar links">
+    Use anchors for links that should always be visible, like a changelog or status page. Combine with `global` to keep them visible across all tabs.
+  </Accordion>
+
+  <Accordion title="Dropdowns — section switcher">
+    Use dropdowns when you have multiple sections that users switch between and want a compact switcher in the navbar area.
+  </Accordion>
+
+  <Accordion title="Products — multi-product companies">
+    Use products when your company ships multiple separate products, each with its own full navigation structure.
+  </Accordion>
+</AccordionGroup>
+
 ## Hidden pages
 
-MDX files not included in `docs.json` will not show up in the sidebar but are accessible through the search bar and by linking directly to them.
+Any MDX file not listed in `docs.json` is treated as a hidden page. Hidden pages are:
+
+- Excluded from the sidebar
+- Accessible by direct URL
+- Discoverable through the search bar
+
+You can also set `hidden: true` in a page's frontmatter to keep it in `docs.json` while removing it from the sidebar.
+
+<CodeGroup>
+
+```yaml page frontmatter
+---
+title: 'Internal reference'
+hidden: true
+---
+```
+
+</CodeGroup>
+
+<Tip>
+Use hidden pages for draft content or internal reference material you want available by link but not surfaced in the main navigation.
+</Tip>
